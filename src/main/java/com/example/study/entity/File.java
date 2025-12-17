@@ -1,6 +1,9 @@
 package com.example.study.entity;
 
+import com.example.study.converter.BooleanConverter;
+import com.example.study.converter.FileModuleTypeConverter;
 import com.example.study.entity.auditing.BaseEntity;
+import com.example.study.enums.FileModuleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,12 +19,8 @@ public class File extends BaseEntity {
 
     @PrePersist
     private void init() {
-        if (this.delYn == null) {
-            this.delYn = "N";
-        }
-        if (this.fileDelYn == null) {
-            this.fileDelYn = "N";
-        }
+        this.isDeleted = false;
+        this.isFileDeleted = false;
     }
 
     @Id
@@ -50,15 +49,20 @@ public class File extends BaseEntity {
     @NotBlank
     private String fileLoadPath;
 
-    @NotBlank
-    private String moduleType;
+    @NotNull
+    @Convert(converter = FileModuleTypeConverter.class)
+    private FileModuleType moduleType;
 
     @NotNull
     private Long moduleId;
 
-    @NotBlank
-    private String delYn;
+    @NotNull
+    @Convert(converter = BooleanConverter.class)
+    @Column(name = "DEL_YN")
+    private Boolean isDeleted;
 
-    @NotBlank
-    private String fileDelYn;
+    @NotNull
+    @Convert(converter = BooleanConverter.class)
+    @Column(name = "FILE_DEL_YN")
+    private Boolean isFileDeleted;
 }

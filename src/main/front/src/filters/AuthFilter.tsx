@@ -1,4 +1,4 @@
-import { useSession } from "@/store/session";
+import { useSession } from "@/store/Session";
 import { Navigate, Outlet } from "react-router";
 
 const AuthFilter = () => {

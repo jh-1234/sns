@@ -1,4 +1,4 @@
-package com.example.study.common;
+package com.example.study.util;
 
 import com.example.study.entity.User;
 import com.example.study.security.CustomUserDetails;

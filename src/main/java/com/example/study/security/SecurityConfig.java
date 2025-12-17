@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -32,7 +33,7 @@ public class SecurityConfig {
     private final CsrfCookieFilter csrfCookieFilter;
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -77,7 +78,7 @@ public class SecurityConfig {
                 .addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class)
                 .exceptionHandling(e -> e.accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpServletResponse.SC_FORBIDDEN)))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/index.html", "/static/**", "/assets/**", "/api/session-check", "/api/test", "/join").permitAll()
+                        .requestMatchers("/index.html", "/static/**", "/assets/**", "/api/session-check", "/api/test", "/api/join").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login

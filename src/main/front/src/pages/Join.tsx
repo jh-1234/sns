@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router";
 import formatPhoneNumber from "@/utils/formatPhoneNumber";
 import axios from "axios";
 import { axiosErrorMessageFormat } from "@/utils/errorUtil";
-import { useJoin } from "@/hooks/useJoin";
+import { useJoin } from "@/hooks/useAuth";
 
 const Join = () => {
   const [name, setName] = useState("");

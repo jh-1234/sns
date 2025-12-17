@@ -1,12 +1,12 @@
 package com.example.study.service;
 
-import com.example.study.common.Session;
 import com.example.study.dto.JoinDTO;
 import com.example.study.dto.UserDTO;
 import com.example.study.entity.User;
 import com.example.study.repository.UserRepository;
+import com.example.study.util.Session;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public void join(JoinDTO dto) {
         User user = new User();

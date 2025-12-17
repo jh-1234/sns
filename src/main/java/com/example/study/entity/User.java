@@ -1,7 +1,8 @@
 package com.example.study.entity;
 
-import com.example.study.common.CommonUtils;
+import com.example.study.converter.BooleanConverter;
 import com.example.study.entity.auditing.TimeEntity;
+import com.example.study.util.CommonUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,11 +20,8 @@ public class User extends TimeEntity {
 
     @PrePersist
     public void init() {
-        if (delYn == null) {
-            delYn = "N";
-        }
-
         telClean = CommonUtils.telClean(tel);
+        isDeleted = false;
     }
 
     @Id
@@ -56,5 +54,7 @@ public class User extends TimeEntity {
     private String gender;
 
     @NotBlank
-    private String delYn;
+    @Convert(converter = BooleanConverter.class)
+    @Column(name = "DEL_YN")
+    private Boolean isDeleted;
 }

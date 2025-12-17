@@ -1,11 +1,12 @@
 package com.example.study.service;
 
-import com.example.study.common.CommonUtils;
 import com.example.study.dto.FileDTO;
 import com.example.study.entity.File;
+import com.example.study.enums.FileModuleType;
+import com.example.study.enums.FileType;
+import com.example.study.properties.StorageProperties;
 import com.example.study.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -14,104 +15,104 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class FileService {
 
-    @Value("${image.upload.path}")
-    private String imageUploadDir;
-
-    @Value("${image.load.path}")
-    private String imageLoadPath;
-
     private final FileRepository fileRepository;
 
-    private static final Map<String, String> MODULE_PATH_MAP = Map.of("test1", "test2"
-    );
+    private final StorageProperties storageProperties;
 
-    public void uploadImage(List<MultipartFile> images, String moduleType, Long moduleId) {
-        if (!images.isEmpty()) {
-            Path savePath;
-            Path loadPath;
-            String originalFilename;
-            String uploadFilename;
-            String filename;
-            String ext;
-            File file;
-            int pos;
-            String modulePath = MODULE_PATH_MAP.get(moduleType);
-
-            if (!StringUtils.hasText(modulePath)) {
-                throw new IllegalArgumentException();
-            }
-
-            Path dir = Path.of(imageUploadDir, modulePath);
-
-            if (Files.notExists(dir)) {
-                try {
-                    Files.createDirectories(dir);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+    public void save(List<MultipartFile> files, FileModuleType moduleType, Long moduleId) {
+        if (!files.isEmpty()) {
+            for (MultipartFile file : files) {
+                if (Objects.nonNull(file) && !file.isEmpty()) {
+                    saveProcess(file, moduleType, moduleId);
                 }
             }
+        }
+    }
 
+    public void saveProcess(MultipartFile file, FileModuleType moduleType, Long moduleId) {
+        String originalFilename = file.getOriginalFilename();
+
+        if (!StringUtils.hasText(originalFilename) || !originalFilename.contains(".")) {
+            throw new IllegalArgumentException();
+        }
+
+        int pos = originalFilename.lastIndexOf(".");
+        String filename = originalFilename.substring(0, pos);
+        String ext = Objects.requireNonNull(originalFilename).substring(pos).toLowerCase();
+
+        // 모듈별로 다른 폴더에 저장하기 위함
+        String modulePath = moduleType.getPath();
+
+        if (!StringUtils.hasText(modulePath)) {
+            throw new IllegalArgumentException();
+        }
+
+        FileType fileType = FileType.getFileType(file.getContentType(), ext);
+
+        String uploadDir = storageProperties.paths().get(fileType).uploadPath();
+        String loadDir = storageProperties.paths().get(fileType).loadPath();
+
+        Path dir = Path.of(uploadDir, modulePath);
+
+        // 디렉토리가 없다면 생성
+        directoryCheck(dir);
+
+        String uploadFilename = UUID.randomUUID().toString().concat(ext);
+        Path savePath = Path.of(uploadDir, modulePath, uploadFilename);
+        Path loadPath = Path.of(loadDir, modulePath, uploadFilename);
+
+        File fileEntity = new File();
+        fileEntity.setOriginalName(originalFilename);
+        fileEntity.setUploadName(uploadFilename);
+        fileEntity.setBasename(filename);
+        fileEntity.setFileExt(ext);
+        fileEntity.setFileSize(file.getSize());
+        fileEntity.setFilePath(savePath.toString());
+        fileEntity.setFileLoadPath(loadPath.toString());
+        fileEntity.setModuleType(moduleType);
+        fileEntity.setModuleId(moduleId);
+
+        fileRepository.save(fileEntity);
+
+        try {
+            file.transferTo(savePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void directoryCheck(Path dir) {
+        if (Files.notExists(dir)) {
             try {
-                for (MultipartFile image : images) {
-                    if (image == null) {
-                        continue;
-                    }
-
-                    originalFilename = image.getOriginalFilename();
-
-                    if (!StringUtils.hasText(originalFilename) || !originalFilename.contains(".")) {
-                        throw new IllegalArgumentException();
-                    }
-
-                    pos = originalFilename.lastIndexOf(".");
-                    filename = originalFilename.substring(0, pos);
-                    ext = Objects.requireNonNull(originalFilename).substring(pos);
-
-                    if (!CommonUtils.imageTypeCheck(image.getContentType()) || !CommonUtils.imageExtCheck(ext.toLowerCase())) {
-                        throw new IllegalArgumentException();
-                    }
-
-                    uploadFilename = UUID.randomUUID().toString().concat(ext);
-                    savePath = Path.of(imageUploadDir, modulePath, uploadFilename);
-                    loadPath = Path.of(imageLoadPath, modulePath, uploadFilename);
-
-                    file = new File();
-                    file.setOriginalName(originalFilename);
-                    file.setUploadName(uploadFilename);
-                    file.setBasename(filename);
-                    file.setFileExt(ext);
-                    file.setFileSize(image.getSize());
-                    file.setFilePath(savePath.toString());
-                    file.setFileLoadPath(loadPath.toString());
-                    file.setModuleType(moduleType);
-                    file.setModuleId(moduleId);
-
-                    image.transferTo(savePath);
-
-                    fileRepository.save(file);
-                }
+                Files.createDirectories(dir);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    public List<FileDTO> getImages(String moduleType, Long moduleId) {
-        return findByModuleTypeAndModuleId(moduleType, moduleId).stream().map(image -> new FileDTO(image.getFileId(), image.getBasename(), image.getFileLoadPath())).toList();
+    public List<FileDTO> getFiles(FileModuleType moduleType, Long moduleId) {
+        return findByModuleTypeAndModuleId(moduleType, moduleId).stream().map(file -> new FileDTO(file.getFileId(), file.getBasename(), file.getFileLoadPath())).toList();
     }
 
-    private List<File> findByModuleTypeAndModuleId(String moduleType, Long moduleId) {
-        return fileRepository.findAllByModuleTypeAndModuleIdAndDelYn(moduleType, moduleId, "N");
+    public Map<Long, List<FileDTO>> getAllFiles(FileModuleType moduleType, Set<Long> moduleIds) {
+        return findByModuleTypeAndModuleIdIn(moduleType, moduleIds).stream().collect(Collectors.groupingBy(File::getModuleId, Collectors.mapping(file -> new FileDTO(file.getFileId(), file.getBasename(), file.getFileLoadPath()), Collectors.toList())));
+    }
+
+    private List<File> findByModuleTypeAndModuleId(FileModuleType moduleType, Long moduleId) {
+        return fileRepository.findAllByModuleTypeAndModuleIdAndIsDeleted(moduleType, moduleId, false);
+    }
+
+    private List<File> findByModuleTypeAndModuleIdIn(FileModuleType moduleType, Set<Long> moduleIds) {
+        return fileRepository.findByModuleTypeAndModuleIdInAndIsDeleted(moduleType, moduleIds, false);
     }
 
     public void remove(Long fileId) {
@@ -123,6 +124,6 @@ public class FileService {
     }
 
     public List<File> getRemoveTargetList() {
-        return fileRepository.findAllByDelYn("Y");
+        return fileRepository.findAllByIsDeleted(true);
     }
 }

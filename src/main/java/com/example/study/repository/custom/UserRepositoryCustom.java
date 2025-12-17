@@ -1,4 +1,4 @@
-package com.example.study.repository;
+package com.example.study.repository.custom;
 
 import com.example.study.dto.UserDTO;
 

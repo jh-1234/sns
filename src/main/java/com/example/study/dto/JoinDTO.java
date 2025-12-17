@@ -1,7 +1,7 @@
 package com.example.study.dto;
 
-import com.example.study.common.CommonUtils;
 import com.example.study.enums.ValidationType;
+import com.example.study.util.CommonUtils;
 import com.example.study.valid.CustomValidation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

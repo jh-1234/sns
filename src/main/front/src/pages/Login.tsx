@@ -13,9 +13,15 @@ import {
   UserNavigation,
   UserNavigationWrap,
 } from "../styles/Login.styles";
-import { useLogin } from "@/hooks/useLogin";
+import { useLogin } from "@/hooks/useAuth";
+import { useNavigate } from "react-router";
+import { useSetSession } from "@/store/Session";
+import axios from "axios";
+import { axiosErrorMessageFormat } from "@/utils/errorUtil";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const setSession = useSetSession();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { mutate: login, isPending } = useLogin();
@@ -37,7 +43,17 @@ const Login = () => {
       password,
     };
 
-    login(data);
+    login(data, {
+      onSuccess: (res) => {
+        setSession(res.data);
+        navigate("/", { replace: true });
+      },
+      onError: (e) => {
+        if (axios.isAxiosError(e)) {
+          alert(axiosErrorMessageFormat(e));
+        }
+      },
+    });
   };
 
   return (

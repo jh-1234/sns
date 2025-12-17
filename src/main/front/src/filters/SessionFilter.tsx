@@ -1,5 +1,5 @@
 import { sessionCheck } from "@/api/auth";
-import { useSetSession } from "@/store/session";
+import { useSetSession } from "@/store/Session";
 import { useEffect, type ReactNode } from "react";
 import { useLocation } from "react-router";
 

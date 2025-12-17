@@ -1,4 +1,4 @@
-package com.example.study.common;
+package com.example.study.util;
 
 import com.example.study.constants.ImageConstants;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -15,10 +14,6 @@ public final class CommonUtils {
 
     private CommonUtils() {
     }
-
-    private static final Set<String> imageTypes = Set.of("image/jpeg", "image/png", "image/gif");
-
-    private static final Set<String> imageExts = Set.of(".jpg", ".jpeg", ".png", ".gif");
 
     public static String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
@@ -68,14 +63,6 @@ public final class CommonUtils {
 
     public static String strip(String str) {
         return Objects.nonNull(str) ? str.strip() : null;
-    }
-
-    public static boolean imageTypeCheck(String type) {
-        return imageTypes.contains(type);
-    }
-
-    public static boolean imageExtCheck(String ext) {
-        return imageExts.contains(ext);
     }
 
     public static boolean imageSizeCheck(List<MultipartFile> images) {

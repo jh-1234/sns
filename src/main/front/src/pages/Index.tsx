@@ -1,30 +1,34 @@
-import { getUsers } from "@/api/test";
+import CreatePostButton from "@/components/post/CreatePostButton";
+import PostFeed from "@/components/post/PostFeed";
 import { Button } from "@/components/ui/button";
-import { useLogout } from "@/hooks/useLogout";
-import { useQuery } from "@tanstack/react-query";
+import { useLogout } from "@/hooks/useAuth";
+import { useSetSession } from "@/store/Session";
+import { useNavigate } from "react-router";
 
 const Index = () => {
-  const { data: users } = useQuery({
-    queryFn: getUsers,
-    queryKey: ["users"],
-  });
+  const navigate = useNavigate();
+  const setSession = useSetSession();
 
   const { mutate: logout } = useLogout();
 
-  return (
-    <>
-      {users && users.length > 0 ? (
-        <ul>
-          {users.map((user) => (
-            <li key={user.userId}>{user.name}</li>
-          ))}
-        </ul>
-      ) : (
-        <div>-----</div>
-      )}
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        setSession(null);
+        navigate("/login", { replace: true });
+      },
+      onError: (e) => {
+        console.error(e);
+      },
+    });
+  };
 
-      <Button onClick={() => logout()}>로그아웃</Button>
-    </>
+  return (
+    <div className="flex flex-col gap-10">
+      <CreatePostButton />
+      <PostFeed />
+      <Button onClick={handleLogout}>로그아웃</Button>
+    </div>
   );
 };
 

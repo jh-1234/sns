@@ -1,7 +1,7 @@
 package com.example.study.repository.impl;
 
 import com.example.study.dto.UserDTO;
-import com.example.study.repository.UserRepositoryCustom;
+import com.example.study.repository.custom.UserRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         user.name
                 ))
                 .from(user)
-                .where(user.delYn.eq("N"))
+                .where(user.isDeleted.eq(false))
                 .fetch();
     }
 }

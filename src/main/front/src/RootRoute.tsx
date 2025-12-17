@@ -10,31 +10,28 @@ import AuthLayout from "./components/layout/AuthLayout";
 import GuestFilter from "./filters/GuestFilter";
 import NotFound from "./pages/NotFound";
 import AuthFilter from "./filters/AuthFilter";
-import SessionFilter from "./filters/SessionFilter";
 import ForgetPassword from "./pages/ForgetPassword";
 
 export default function RootRoute() {
   return (
-    <SessionFilter>
-      <Routes>
-        <Route element={<AuthLayout />}>
-          <Route element={<GuestFilter />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/join" element={<Join />} />
-            <Route path="/forget-password" element={<ForgetPassword />} />
-          </Route>
+    <Routes>
+      <Route element={<AuthLayout />}>
+        <Route element={<GuestFilter />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/join" element={<Join />} />
+          <Route path="/forget-password" element={<ForgetPassword />} />
         </Route>
-        <Route element={<AuthFilter />}>
-          <Route element={<GlobalLayout />}>
-            <Route path="/" element={<Index />} />
+      </Route>
+      <Route element={<AuthFilter />}>
+        <Route element={<GlobalLayout />}>
+          <Route path="/" element={<Index />} />
 
-            <Route path="/post/:postId" element={<PostDetail />} />
-            <Route path="/profile/:userId" element={<ProfileDetail />} />
-            <Route path="/reset-password" element={<AccountInfoUpdate />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
+          <Route path="/post/:postId" element={<PostDetail />} />
+          <Route path="/profile/:userId" element={<ProfileDetail />} />
+          <Route path="/reset-password" element={<AccountInfoUpdate />} />
         </Route>
-      </Routes>
-    </SessionFilter>
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }

@@ -1,13 +1,12 @@
 package com.example.study.custom;
 
-import com.example.study.common.Session;
-import com.example.study.custom.auditing.CreateByName;
-import com.example.study.custom.auditing.CreateBySeq;
-import com.example.study.custom.auditing.UpdateByName;
-import com.example.study.custom.auditing.UpdateBySeq;
+import com.example.study.custom.auditing.CreatedByName;
+import com.example.study.custom.auditing.CreatedBySeq;
+import com.example.study.custom.auditing.UpdatedByName;
+import com.example.study.custom.auditing.UpdatedBySeq;
 import com.example.study.entity.User;
+import com.example.study.util.Session;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -21,12 +20,12 @@ public class CustomAuditingEntityListener {
 
         while (Objects.nonNull(clazz)) {
             for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(CreateBySeq.class)) {
+                if (field.isAnnotationPresent(CreatedBySeq.class)) {
                     field.setAccessible(true);
                     field.set(entity, session.getSeq());
                 }
 
-                if (field.isAnnotationPresent(CreateByName.class)) {
+                if (field.isAnnotationPresent(CreatedByName.class)) {
                     field.setAccessible(true);
                     field.set(entity, session.getName());
                 }
@@ -43,12 +42,12 @@ public class CustomAuditingEntityListener {
 
         while (Objects.nonNull(clazz)) {
             for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(UpdateBySeq.class)) {
+                if (field.isAnnotationPresent(UpdatedBySeq.class)) {
                     field.setAccessible(true);
                     field.set(entity, session.getSeq());
                 }
 
-                if (field.isAnnotationPresent(UpdateByName.class)) {
+                if (field.isAnnotationPresent(UpdatedByName.class)) {
                     field.setAccessible(true);
                     field.set(entity, session.getName());
                 }
