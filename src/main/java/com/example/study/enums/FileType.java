@@ -20,6 +20,9 @@ public enum FileType {
 
     private final Set<String> extensions;
 
+    /**
+     * 보안을 위해 mimeType과 extension 둘 다 조건에 맞아야 FileType 리턴
+     */
     public static FileType getFileType(String mimeType, String extension) {
         return Arrays.stream(values())
                 .filter(fileType -> fileType.mimeTypes.contains(mimeType) && fileType.extensions.contains(extension))

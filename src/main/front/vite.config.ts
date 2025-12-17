@@ -9,19 +9,7 @@ export default defineConfig({
 
   server: {
     proxy: {
-      "/api": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-      },
-      "/images": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-      },
-      "/videos": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-      },
-      "/files": {
+      "^/(api|images|videos|files)": {
         target: "http://localhost:8080",
         changeOrigin: true,
       },
