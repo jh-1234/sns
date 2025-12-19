@@ -28,12 +28,11 @@ public class FileService {
     private final StorageProperties storageProperties;
 
     public void save(List<MultipartFile> files, FileModuleType moduleType, Long moduleId) {
-        if (!files.isEmpty()) {
-            for (MultipartFile file : files) {
-                if (Objects.nonNull(file) && !file.isEmpty()) {
-                    saveProcess(file, moduleType, moduleId);
-                }
-            }
+        if (Objects.nonNull(files)) {
+            files
+                    .stream()
+                    .filter(file -> Objects.nonNull(file) && !file.isEmpty())
+                    .forEach(file -> saveProcess(file, moduleType, moduleId));
         }
     }
 

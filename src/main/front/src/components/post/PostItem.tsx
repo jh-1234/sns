@@ -1,11 +1,12 @@
 import type { Post } from "@/types/post";
 import defaultProfile from "@/assets/default-profile.png";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
-import { HeartIcon, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { formatTimeAgo } from "@/lib/time";
 import EditPostButton from "./EditPostButton";
 import DeletePostButton from "./DeletePostButton";
 import { useSession } from "@/store/Session";
+import LikePostButton from "./LikePostButton";
 
 const PostItem = (post: Post) => {
   const session = useSession();
@@ -61,10 +62,11 @@ const PostItem = (post: Post) => {
       </div>
 
       <div className="flex gap-2">
-        <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border p-2 px-4 text-sm">
-          <HeartIcon className="h-4 w-4" />
-          <span>{post.likeCount}</span>
-        </div>
+        <LikePostButton
+          postId={post.postId!}
+          isLiked={post.isLiked!}
+          likeCount={post.likeCount!}
+        />
       </div>
 
       <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border p-2 px-4 text-sm">

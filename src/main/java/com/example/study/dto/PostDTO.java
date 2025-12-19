@@ -2,8 +2,9 @@ package com.example.study.dto;
 
 import com.example.study.util.CommonUtils;
 import com.example.study.valid.CustomValidation;
-import com.example.study.valid.groups.SaveGroup;
-import com.example.study.valid.groups.UpdateGroup;
+import com.example.study.valid.groups.common.SaveGroup;
+import com.example.study.valid.groups.common.UpdateGroup;
+import com.example.study.valid.groups.post.PostLikeCountGroup;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -19,7 +20,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostDTO {
 
-    @NotNull(groups = UpdateGroup.class)
+    @NotNull(groups = {UpdateGroup.class, PostLikeCountGroup.class})
     private Long postId;
 
     private Long authorId;
@@ -33,6 +34,9 @@ public class PostDTO {
     private String profileUrl;
 
     private Integer likeCount;
+
+    @NotNull(groups = {PostLikeCountGroup.class})
+    private Boolean isLiked;
 
     private Boolean isUpdated;
 

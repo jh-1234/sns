@@ -70,3 +70,18 @@ export const postDelete = async (postId: number) => {
 
   return res;
 };
+
+export const togglePostLike = async ({
+  postId,
+  isLiked,
+}: {
+  postId: number;
+  isLiked: boolean;
+}) => {
+  const res = await axios.post("/api/post-like-count-update", {
+    postId,
+    isLiked,
+  });
+
+  return res;
+};

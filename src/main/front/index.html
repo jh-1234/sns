@@ -5,6 +5,30 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>front</title>
+    <script>
+      try {
+        const themeStore = localStorage.getItem("themeStore");
+
+        const themeParse = themeStore ? JSON.parse(themeStore) : null;
+
+        const theme = themeParse.state.theme;
+
+        const htmlTag = document.documentElement;
+        htmlTag.classList.remove("dark", "light");
+
+        if (theme === "system") {
+          const isDarkTheme = window.matchMedia(
+            "(prefers-color-scheme: dark)",
+          ).matches;
+
+          htmlTag.classList.add(isDarkTheme ? "dark" : "light");
+        } else {
+          htmlTag.classList.add(theme);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

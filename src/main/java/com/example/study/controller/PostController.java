@@ -3,8 +3,9 @@ package com.example.study.controller;
 import com.example.study.dto.PostDTO;
 import com.example.study.service.PostService;
 import com.example.study.util.PageObj;
-import com.example.study.valid.groups.SaveGroup;
-import com.example.study.valid.groups.UpdateGroup;
+import com.example.study.valid.groups.common.SaveGroup;
+import com.example.study.valid.groups.common.UpdateGroup;
+import com.example.study.valid.groups.post.PostLikeCountGroup;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -54,6 +55,13 @@ public class PostController {
     @DeleteMapping("/api/post/{postId}")
     public ResponseEntity<HttpStatus> delete(@PathVariable("postId") Long postId) {
         postService.delete(postId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/api/post-like-count-update")
+    public ResponseEntity<HttpStatus> likeCountUpdate(@RequestBody @Validated(PostLikeCountGroup.class) PostDTO dto) {
+        postService.likeCountUpdate(dto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

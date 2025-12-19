@@ -4,7 +4,9 @@ import com.example.study.dto.FileDTO;
 import com.example.study.dto.PostDTO;
 import com.example.study.entity.File;
 import com.example.study.entity.Post;
+import com.example.study.entity.PostLikeUserMapping;
 import com.example.study.enums.FileModuleType;
+import com.example.study.repository.PostLikeUserMappingRepository;
 import com.example.study.repository.PostRepository;
 import com.example.study.util.CustomException;
 import com.example.study.util.PageObj;
@@ -16,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +27,8 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
+
+    private final PostLikeUserMappingRepository postLikeUserMappingRepository;
 
     private final FileService fileService;
 
@@ -41,7 +42,7 @@ public class PostService {
     }
 
     public PostDTO getPost(Long postId) {
-        return postRepository.findByPostIdAndIsDeletedIsFalse(postId).map(post -> {
+        return findByPostId(postId).map(post -> {
             PostDTO dto = new PostDTO();
             dto.setPostId(post.getPostId());
             dto.setAuthorId(post.getUser().getSeq());
@@ -73,7 +74,7 @@ public class PostService {
     }
 
     public void update(PostDTO dto, List<MultipartFile> images) {
-        Post post = postRepository.findByPostIdAndIsDeletedIsFalse(dto.getPostId()).orElseThrow();
+        Post post = findByPostId(dto.getPostId()).orElseThrow();
 
         if (!Objects.equals(Session.getSession().getSeq(), post.getUser().getSeq())) {
             throw new CustomException("Post 작성자 본인이 아닙니다.");
@@ -86,7 +87,7 @@ public class PostService {
     }
 
     public void delete(Long postId) {
-        Post post = postRepository.findByPostIdAndIsDeletedIsFalse(postId).orElseThrow();
+        Post post = findByPostId(postId).orElseThrow();
 
         if (!Objects.equals(Session.getSession().getSeq(), post.getUser().getSeq())) {
             throw new CustomException("Post 작성자 본인이 아닙니다.");
@@ -95,5 +96,25 @@ public class PostService {
         post.setIsDeleted(true);
 
         fileService.remove(post.getFiles().stream().map(File::getFileId).collect(Collectors.toSet()));
+    }
+
+    public Optional<Post> findByPostId(Long postId) {
+        return postRepository.findByPostIdAndIsDeletedIsFalse(postId);
+    }
+
+    public void likeCountUpdate(PostDTO dto) {
+        Post post = findByPostId(dto.getPostId()).orElseThrow();
+
+        PostLikeUserMapping mapping = new PostLikeUserMapping();
+        mapping.setPost(post);
+        mapping.setUser(Session.getSession());
+
+        if (dto.getIsLiked()) {
+            postLikeUserMappingRepository.likeCancel(mapping);
+            postRepository.decrementLikeCount(post.getPostId());
+        } else {
+            postLikeUserMappingRepository.save(mapping);
+            postRepository.incrementLikeCount(post.getPostId());
+        }
     }
 }

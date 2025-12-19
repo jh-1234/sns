@@ -53,7 +53,7 @@ public class User extends TimeEntity {
     @NotBlank
     private String gender;
 
-    @NotBlank
+    @NotNull
     @Convert(converter = BooleanConverter.class)
     @Column(name = "DEL_YN")
     private Boolean isDeleted;

@@ -9,6 +9,7 @@ export type Post = {
   authorId?: number;
   authorName?: string;
   content: string;
+  isLiked?: boolean;
   likeCount?: number;
   isUpdated?: boolean;
   profileUrl?: string;

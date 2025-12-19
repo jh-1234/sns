@@ -2,6 +2,7 @@ package com.example.study.repository.impl;
 
 import com.example.study.dto.PostDTO;
 import com.example.study.repository.custom.PostRepositoryCustom;
+import com.example.study.util.Session;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static com.example.study.entity.QPost.post;
+import static com.example.study.entity.QPostLikeUserMapping.postLikeUserMapping;
 import static com.example.study.entity.QUser.user;
 
 @Component
@@ -31,11 +33,18 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         user.name.as("authorName"),
                         post.content,
                         post.likeCount,
+                        postLikeUserMapping.likeId.isNotNull().as("isLiked"),
                         post.isUpdated,
                         post.createdDate
                 ))
                 .from(post)
                 .join(post.user, user)
+                .leftJoin(postLikeUserMapping)
+                .on(
+                        postLikeUserMapping.post.eq(post),
+                        postLikeUserMapping.user.eq(Session.getSession()),
+                        postLikeUserMapping.isDeleted.eq(false)
+                )
                 .where(post.isDeleted.eq(false))
                 .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())

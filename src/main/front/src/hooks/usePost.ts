@@ -1,4 +1,10 @@
-import { getPosts, getPostsInfinity, postDelete, postSave } from "@/api/post";
+import {
+  getPosts,
+  getPostsInfinity,
+  postDelete,
+  postSave,
+  togglePostLike,
+} from "@/api/post";
 import { QUERY_KEYS } from "@/lib/constants";
 import {
   useInfiniteQuery,
@@ -6,6 +12,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const usePostSave = () => {
   const queryClient = useQueryClient();
@@ -54,6 +61,22 @@ export const usePostDelete = () => {
     onSuccess: (_, postId) => {
       queryClient.removeQueries({ queryKey: QUERY_KEYS.post.byId(postId) });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.list });
+    },
+  });
+};
+
+export const useTogglePostLike = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: togglePostLike,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.list });
+    },
+    onError: (e) => {
+      toast.error("오류가 발생했습니다.", { position: "top-center" });
+
+      console.error(e);
     },
   });
 };
