@@ -11,6 +11,10 @@ export const LoginForm = styled.form`
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 1;
+
+  .dark & {
+    background-color: rgba(15, 23, 42, 0.8);
+  }
 `;
 
 export const InputGroup = styled.div`

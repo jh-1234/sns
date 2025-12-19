@@ -61,4 +61,8 @@ export const AuthLayoutWrap = styled.div`
   overflow: hidden;
   background-color: #d6bcff;
   position: relative;
+
+  .dark & {
+    background-color: #1e293b;
+  }
 `;

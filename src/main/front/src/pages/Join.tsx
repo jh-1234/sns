@@ -81,7 +81,7 @@ const Join = () => {
   };
 
   return (
-    <div className="z-10 flex flex-col gap-8 rounded-2xl bg-white/70 p-6 shadow-xl">
+    <div className="z-10 flex flex-col gap-8 rounded-2xl bg-white/70 p-6 shadow-xl dark:bg-[rgba(15,23,42,0.8)]">
       <div className="text-xl font-bold">회원가입</div>
 
       <div className="flex flex-col gap-2">
@@ -149,19 +149,19 @@ const Join = () => {
         </div>
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Button
-          className="w-100"
+          className="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:text-white dark:hover:bg-blue-600"
           onClick={handleJoinClick}
           disabled={isPending}
         >
           회원가입
         </Button>
-      </div>
 
-      <div className="text-center">
-        <Link className="text-muted-foreground hover:underline" to={"/login"}>
-          로그인
+        <Link to={"/login"} className="w-full">
+          <Button className="w-full cursor-pointer border border-gray-300 bg-gray-100/50 text-gray-700 hover:bg-gray-200 dark:border-slate-600 dark:bg-transparent dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200">
+            취소
+          </Button>
         </Link>
       </div>
     </div>

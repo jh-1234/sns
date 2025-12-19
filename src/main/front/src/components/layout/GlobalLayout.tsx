@@ -1,16 +1,14 @@
-import { Link, Outlet } from "react-router";
-import logo from "@/assets/logo.png";
+import { Outlet } from "react-router";
 import ThemeButton from "./header/ThemeButton";
 import ProfileButton from "./header/ProfileButton";
+import LogoButton from "./header/LogoButton";
 
 const GlobalLayout = () => {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="h-15 border-b bg-blue-200">
+      <header className="h-15 border-b bg-blue-200 dark:border-slate-700 dark:bg-[#1e293b]">
         <div className="m-auto flex h-full w-full max-w-250 justify-between px-4">
-          <Link to={"/"} className="flex items-center gap-2">
-            <img className="h-10" src={logo} />
-          </Link>
+          <LogoButton />
 
           <div className="flex items-center gap-5">
             <ThemeButton />
