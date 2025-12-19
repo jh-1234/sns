@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
     @Query("select u from User u where u.userId = :userId and u.isDeleted = false")
     Optional<User> loginUser(String userId);
+
+    Boolean existsByUserId(String userId);
 }

@@ -19,13 +19,19 @@ export const postSave = async ({
 
   formData.append("data", postData);
 
-  if (images) {
+  if (images && images.length > 0) {
     images.forEach((file) => {
       formData.append("images", file);
     });
   }
 
-  const res = axios.post("/api/post", formData);
+  let res;
+
+  if (data.postId) {
+    res = await axios.patch("/api/post", formData);
+  } else {
+    res = await axios.post("/api/post", formData);
+  }
 
   return res;
 };
@@ -57,4 +63,10 @@ export const getPostsInfinity = async ({
   });
 
   return data;
+};
+
+export const postDelete = async (postId: number) => {
+  const res = await axios.delete(`/api/post/${postId}`);
+
+  return res;
 };

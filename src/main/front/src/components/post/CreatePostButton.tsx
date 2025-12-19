@@ -4,9 +4,13 @@ import { PlusCircleIcon } from "lucide-react";
 const CreatePostButton = () => {
   const openPostEditorModal = useOpenPostEditorModal();
 
+  const handleButtonClick = () => {
+    openPostEditorModal();
+  };
+
   return (
     <div
-      onClick={openPostEditorModal}
+      onClick={handleButtonClick}
       className="bg-muted text-muted-foreground cursor-pointer rounded-xl px-6 py-4"
     >
       <div className="flex items-center justify-between">

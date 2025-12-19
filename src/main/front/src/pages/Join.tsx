@@ -74,6 +74,8 @@ const Join = () => {
         if (axios.isAxiosError(e)) {
           alert(axiosErrorMessageFormat(e));
         }
+
+        console.error(e);
       },
     });
   };

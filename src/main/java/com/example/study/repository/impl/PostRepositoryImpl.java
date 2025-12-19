@@ -27,6 +27,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<PostDTO> posts = queryFactory
                 .select(Projections.bean(PostDTO.class,
                         post.postId,
+                        user.seq.as("authorId"),
                         user.name.as("authorName"),
                         post.content,
                         post.likeCount,

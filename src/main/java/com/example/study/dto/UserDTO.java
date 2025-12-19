@@ -11,6 +11,8 @@ import java.time.LocalDate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDTO {
 
+    private Long seq;
+
     private String userId;
 
     private String name;

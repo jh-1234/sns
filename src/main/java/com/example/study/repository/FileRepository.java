@@ -18,10 +18,14 @@ public interface FileRepository extends JpaRepository<File, Long> {
     List<File> findAllByIsDeleted(Boolean isDeleted);
 
     @Modifying
-    @Query("update File f set f.isDeleted = true where f.fileId = :fileId")
+    @Query("update File f set f.isDeleted = true where f.fileId = :fileId and f.isDeleted = false")
     void remove(Long fileId);
 
     @Modifying
-    @Query("update File f set f.isFileDeleted = true where f.fileId = :fileId")
+    @Query("update File f set f.isDeleted = true where f.fileId in :fileIds and f.isDeleted = false")
+    void remove(Set<Long> fileIds);
+
+    @Modifying
+    @Query("update File f set f.isFileDeleted = true where f.fileId = :fileId and f.isFileDeleted = false")
     void fileRemove(Long fileId);
 }

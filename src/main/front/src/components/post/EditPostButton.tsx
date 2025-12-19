@@ -1,11 +1,12 @@
 import { useOpenPostEditorModal } from "@/store/PostEditorModal";
 import { Button } from "../ui/button";
+import type { Post } from "@/types/post";
 
-const EditPostItemButton = () => {
-  const openPostEditorModel = useOpenPostEditorModal();
+const EditPostButton = ({ post }: { post: Post }) => {
+  const openPostEditorModal = useOpenPostEditorModal();
 
   const handleButtonClick = () => {
-    openPostEditorModel();
+    openPostEditorModal(post);
   };
 
   return (
@@ -19,4 +20,4 @@ const EditPostItemButton = () => {
   );
 };
 
-export default EditPostItemButton;
+export default EditPostButton;

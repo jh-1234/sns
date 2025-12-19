@@ -1,11 +1,12 @@
 package com.example.study.service;
 
-import com.example.study.aop.NoAop;
 import com.example.study.dto.FileDTO;
 import com.example.study.dto.PostDTO;
+import com.example.study.entity.File;
 import com.example.study.entity.Post;
 import com.example.study.enums.FileModuleType;
 import com.example.study.repository.PostRepository;
+import com.example.study.util.CustomException;
 import com.example.study.util.PageObj;
 import com.example.study.util.Session;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,7 +31,6 @@ public class PostService {
 
     private final FileService fileService;
 
-    @NoAop
     public void save(PostDTO dto, List<MultipartFile> images) {
         Post post = new Post();
         post.setUser(Session.getSession());
@@ -37,6 +38,22 @@ public class PostService {
 
         postRepository.save(post);
         fileService.save(images, FileModuleType.POST, post.getPostId());
+    }
+
+    public PostDTO getPost(Long postId) {
+        return postRepository.findByPostIdAndIsDeletedIsFalse(postId).map(post -> {
+            PostDTO dto = new PostDTO();
+            dto.setPostId(post.getPostId());
+            dto.setAuthorId(post.getUser().getSeq());
+            dto.setAuthorName(post.getUser().getName());
+            dto.setContent(post.getContent());
+            dto.setLikeCount(post.getLikeCount());
+            dto.setIsUpdated(post.getIsUpdated());
+            dto.setFiles(fileService.getFiles(FileModuleType.POST, post.getPostId()));
+            dto.setCreatedDate(post.getCreatedDate());
+
+            return dto;
+        }).orElseThrow();
     }
 
     public PageObj<PostDTO> getPosts(Pageable pageable) {
@@ -53,5 +70,30 @@ public class PostService {
         posts.stream().forEach(post -> post.setFiles(files.get(post.getPostId())));
 
         return new PageObj<>(posts);
+    }
+
+    public void update(PostDTO dto, List<MultipartFile> images) {
+        Post post = postRepository.findByPostIdAndIsDeletedIsFalse(dto.getPostId()).orElseThrow();
+
+        if (!Objects.equals(Session.getSession().getSeq(), post.getUser().getSeq())) {
+            throw new CustomException("Post 작성자 본인이 아닙니다.");
+        }
+
+        post.setContent(dto.getContent());
+
+        fileService.remove(dto.getDeleteFileIds());
+        fileService.save(images, FileModuleType.POST, post.getPostId());
+    }
+
+    public void delete(Long postId) {
+        Post post = postRepository.findByPostIdAndIsDeletedIsFalse(postId).orElseThrow();
+
+        if (!Objects.equals(Session.getSession().getSeq(), post.getUser().getSeq())) {
+            throw new CustomException("Post 작성자 본인이 아닙니다.");
+        }
+
+        post.setIsDeleted(true);
+
+        fileService.remove(post.getFiles().stream().map(File::getFileId).collect(Collectors.toSet()));
     }
 }

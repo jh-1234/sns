@@ -12,44 +12,30 @@ import java.util.*;
 @Component
 public class AopAspect {
 
-    @Around("execution(* com.example.study.service..*(..)) && !@annotation(com.example.study.aop.NoAop)")
-    public Object paramEmptyCheck(ProceedingJoinPoint joinPoint) throws Throwable {
-        Class<?> returnType = ((MethodSignature) joinPoint.getSignature()).getReturnType();
+    /**
+     * service 메소드 호출 시 파라미터가 전부 null 이라면 메소드 실행 안함
+     */
+    @Around("execution(* com.example.study.service..*(..))")
+    public Object paramNullCheck(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object[] args = joinPoint.getArgs();
 
-        for (Object arg : joinPoint.getArgs()) {
-            if (arg == null) {
-                return call(returnType);
-            }
-
-            if (arg instanceof Collection<?> && ((Collection<?>) arg).isEmpty()) {
-                return call(returnType);
-            }
-
-            if (arg instanceof Map<?, ?> && ((Map<?, ?>) arg).isEmpty()) {
-                return call(returnType);
-            }
+        if (args.length == 0) {
+            return joinPoint.proceed();
         }
 
-        return joinPoint.proceed();
+        Class<?> returnType = ((MethodSignature) joinPoint.getSignature()).getReturnType();
+        boolean isValid = Arrays.stream(args).anyMatch(Objects::nonNull);
+
+        return isValid ? joinPoint.proceed() : getEmptyInstance(returnType);
     }
 
-    private Object call(Class<?> returnType) {
-        if (List.class.isAssignableFrom(returnType)) {
-            return List.of();
-        }
-
-        if (Set.class.isAssignableFrom(returnType)) {
-            return Set.of();
-        }
-
-        if (Map.class.isAssignableFrom(returnType)) {
-            return Map.of();
-        }
-
-        if (Optional.class.isAssignableFrom(returnType)) {
-            return Optional.empty();
-        }
-
-        return null;
+    private Object getEmptyInstance(Class<?> returnType) {
+        return switch (returnType) {
+            case Class<?> type when List.class.isAssignableFrom(type) -> List.of();
+            case Class<?> type when Set.class.isAssignableFrom(type) -> Set.of();
+            case Class<?> type when Map.class.isAssignableFrom(type) -> Map.of();
+            case Class<?> type when Optional.class.isAssignableFrom(type) -> Optional.empty();
+            default -> null;
+        };
     }
 }

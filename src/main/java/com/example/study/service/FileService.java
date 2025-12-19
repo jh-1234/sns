@@ -119,6 +119,10 @@ public class FileService {
         fileRepository.remove(fileId);
     }
 
+    public void remove(Set<Long> fileIds) {
+        fileRepository.remove(fileIds);
+    }
+
     public void fileRemove(Long fileId) {
         fileRepository.fileRemove(fileId);
     }

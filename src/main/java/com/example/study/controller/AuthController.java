@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -30,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/api/join")
-    public ResponseEntity<Map<String, String>> join(@RequestBody @Valid JoinDTO dto) {
+    public ResponseEntity<HttpStatus> join(@RequestBody @Valid JoinDTO dto) {
         authService.join(dto);
 
         return new ResponseEntity<>(HttpStatus.OK);

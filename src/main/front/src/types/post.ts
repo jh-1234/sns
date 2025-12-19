@@ -1,10 +1,12 @@
 export type Image = {
-  file: File;
+  file?: File | null;
   previewUrl: string;
+  fileId?: number;
 };
 
 export type Post = {
   postId?: number;
+  authorId?: number;
   authorName?: string;
   content: string;
   likeCount?: number;

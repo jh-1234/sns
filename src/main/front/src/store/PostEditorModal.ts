@@ -1,18 +1,20 @@
+import type { Post } from "@/types/post";
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 
-const init: { isOpen: boolean } = {
+const init: { isOpen: boolean; post: Post | null } = {
   isOpen: false,
+  post: null,
 };
 
 const usePostEditorModalStore = create(
   combine(init, (set) => ({
     actions: {
-      open: () => {
-        set({ isOpen: true });
+      open: (post?: Post) => {
+        set({ isOpen: true, post: post || null });
       },
       close: () => {
-        set({ isOpen: false });
+        set({ isOpen: false, post: null });
       },
     },
   })),
@@ -27,8 +29,9 @@ export const useOpenPostEditorModal = () => {
 export const usePostEditorModal = () => {
   const {
     isOpen,
+    post,
     actions: { open, close },
   } = usePostEditorModalStore();
 
-  return { isOpen, open, close };
+  return { isOpen, post, open, close };
 };

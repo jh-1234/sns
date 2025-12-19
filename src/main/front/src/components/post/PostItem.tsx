@@ -1,12 +1,18 @@
 import type { Post } from "@/types/post";
 import defaultProfile from "@/assets/default-profile.png";
-import { Button } from "../ui/button";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { HeartIcon, MessageCircle } from "lucide-react";
 import { formatTimeAgo } from "@/lib/time";
-import EditPostItemButton from "./EditPostItemButton";
+import EditPostButton from "./EditPostButton";
+import DeletePostButton from "./DeletePostButton";
+import { useSession } from "@/store/Session";
 
 const PostItem = (post: Post) => {
+  const session = useSession();
+  const seq = session?.seq;
+
+  const isMine = post.authorId === seq;
+
   return (
     <div className="flex flex-col gap-4 border-b pb-8">
       <div className="flex justify-between">
@@ -24,10 +30,12 @@ const PostItem = (post: Post) => {
         </div>
 
         <div className="text-muted-foreground flex text-sm">
-          <EditPostItemButton />
-          <Button className="cursor-pointer" variant={"ghost"}>
-            삭제
-          </Button>
+          {isMine && (
+            <>
+              <EditPostButton post={post} />
+              <DeletePostButton postId={post.postId!} />
+            </>
+          )}
         </div>
       </div>
 

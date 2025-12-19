@@ -2,25 +2,32 @@ package com.example.study.dto;
 
 import com.example.study.util.CommonUtils;
 import com.example.study.valid.CustomValidation;
+import com.example.study.valid.groups.SaveGroup;
+import com.example.study.valid.groups.UpdateGroup;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostDTO {
 
+    @NotNull(groups = UpdateGroup.class)
     private Long postId;
+
+    private Long authorId;
 
     private String authorName;
 
     @Setter(AccessLevel.NONE)
-    @CustomValidation(name = "내용", max = 3000, nullable = false)
+    @CustomValidation(name = "내용", max = 3000, nullable = false, groups = {SaveGroup.class, UpdateGroup.class})
     private String content;
 
     private String profileUrl;
@@ -29,9 +36,11 @@ public class PostDTO {
 
     private Boolean isUpdated;
 
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
 
     private List<FileDTO> files;
+
+    private Set<Long> deleteFileIds;
 
     public void setContent(String content) {
         this.content = CommonUtils.strip(content);

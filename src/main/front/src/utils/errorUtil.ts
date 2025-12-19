@@ -1,9 +1,13 @@
 import type { AxiosError } from "axios";
 
 export const axiosErrorMessageFormat = (e: AxiosError) => {
-  if (e.response?.data) {
-    return Object.values(e.response?.data).join("\n");
-  }
+  const data = e.response?.data;
+
+  if (!data) return "error";
+
+  if (typeof data === "string") return data;
+
+  if (typeof data === "object") return Object.values(data).join("\n");
 
   return "error";
 };

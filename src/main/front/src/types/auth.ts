@@ -14,6 +14,7 @@ export type Login = {
 };
 
 export type Session = {
+  seq: number;
   name: string;
   userId: string;
   tel: string;

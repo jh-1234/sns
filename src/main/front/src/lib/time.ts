@@ -11,5 +11,5 @@ export const formatTimeAgo = (time: Date | string | number) => {
   const hourDiff = Math.floor(minuteDiff / 60);
   if (hourDiff < 24) return `${hourDiff}시간 전`;
 
-  return time.toLocaleString();
+  return String(time).replace("T", " ");
 };

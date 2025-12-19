@@ -1,5 +1,7 @@
 package com.example.study.handler;
 
+import com.example.study.util.CustomException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -24,5 +27,12 @@ public class GlobalExceptionHandler {
         });
 
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<Map<String, String>> customException(CustomException e) {
+        log.error(e.getMessage(), e);
+
+        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
     }
 }

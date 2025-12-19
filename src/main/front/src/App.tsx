@@ -1,3 +1,4 @@
+import { Toaster } from "sonner";
 import "./App.css";
 import SessionFilter from "./filters/SessionFilter";
 import ModalProvider from "./provider/ModalProvider";
@@ -9,6 +10,7 @@ function App() {
       <ModalProvider>
         <RootRoute />
       </ModalProvider>
+      <Toaster position="top-center" richColors />
     </SessionFilter>
   );
 }
