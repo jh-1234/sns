@@ -1,4 +1,4 @@
-import type { Join, Login } from "@/types/auth";
+import type { Join, Login, User, UserInfo } from "@/types/auth";
 import axios from "axios";
 
 export const join = async (data: Join) => {
@@ -24,8 +24,38 @@ export const logout = async () => {
   return res;
 };
 
-export const sessionCheck = async () => {
-  const { data } = await axios.get("/api/session-check");
+export const getSession = async (): Promise<User> => {
+  const { data } = await axios.get("/api/session");
 
   return data;
+};
+
+export const getUserInfo = async (uuid: string): Promise<User> => {
+  const { data } = await axios.get(`/api/user-info/${uuid}`);
+
+  return data;
+};
+
+export const userInfoUpdate = async ({
+  data,
+  image,
+}: {
+  data: UserInfo;
+  image?: File;
+}) => {
+  const formData = new FormData();
+
+  const postData = new Blob([JSON.stringify(data)], {
+    type: "application/json",
+  });
+
+  formData.append("data", postData);
+
+  if (image) {
+    formData.append("image", image);
+  }
+
+  let res = await axios.patch("/api/user-info", formData);
+
+  return res;
 };

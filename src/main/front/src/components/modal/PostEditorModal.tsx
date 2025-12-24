@@ -8,13 +8,13 @@ import {
 } from "../ui/dialog";
 import { usePostEditorModal } from "@/store/PostEditorModal";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import type { Image } from "@/types/post";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { useOpenAlertModal } from "@/store/AlertModal";
 import { usePostSave } from "@/hooks/usePost";
 import axios from "axios";
 import { axiosErrorMessageFormat } from "@/utils/errorUtil";
 import { toast } from "sonner";
+import type { Image } from "@/types/common";
 
 const PostEditorModal = () => {
   const { isOpen, post, close } = usePostEditorModal();

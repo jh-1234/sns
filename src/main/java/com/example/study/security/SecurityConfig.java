@@ -79,7 +79,7 @@ public class SecurityConfig {
                 .addFilterAfter(csrfCookieFilter, BasicAuthenticationFilter.class)
                 .exceptionHandling(e -> e.accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpServletResponse.SC_FORBIDDEN)))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/index.html", "/static/**", "/assets/**", "/api/session-check", "/api/test", "/api/join").permitAll()
+                        .requestMatchers("/index.html", "/static/**", "/assets/**", "/api/session", "/api/test", "/api/join").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login

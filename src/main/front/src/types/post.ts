@@ -1,9 +1,3 @@
-export type Image = {
-  file?: File | null;
-  previewUrl: string;
-  fileId?: number;
-};
-
 export type Post = {
   postId?: number;
   authorId?: number;
@@ -14,6 +8,7 @@ export type Post = {
   isUpdated?: boolean;
   profileUrl?: string;
   createdDate?: Date;
+  uuid?: string;
 
   files?: {
     fileId: number;

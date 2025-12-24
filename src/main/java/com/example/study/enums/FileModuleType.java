@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum FileModuleType {
-    POST("P", "post");
+    POST("P", "post"),
+    PROFILE("PF", "profile");
 
     private final String value;
 

@@ -19,24 +19,27 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class FileService {
 
     private final FileRepository fileRepository;
 
     private final StorageProperties storageProperties;
 
-    public void save(List<MultipartFile> files, FileModuleType moduleType, Long moduleId) {
+    public List<File> save(List<MultipartFile> files, FileModuleType moduleType, Long moduleId) {
         if (Objects.nonNull(files)) {
-            files
+            return files
                     .stream()
                     .filter(file -> Objects.nonNull(file) && !file.isEmpty())
-                    .forEach(file -> saveProcess(file, moduleType, moduleId));
+                    .map(file -> save(file, moduleType, moduleId))
+                    .toList();
         }
+
+        return Collections.emptyList();
     }
 
-    public void saveProcess(MultipartFile file, FileModuleType moduleType, Long moduleId) {
+    public File save(MultipartFile file, FileModuleType moduleType, Long moduleId) {
         String originalFilename = file.getOriginalFilename();
 
         if (!StringUtils.hasText(originalFilename) || !originalFilename.contains(".")) {
@@ -79,10 +82,12 @@ public class FileService {
         fileEntity.setModuleType(moduleType);
         fileEntity.setModuleId(moduleId);
 
-        fileRepository.save(fileEntity);
+        File saveFile = fileRepository.save(fileEntity);
 
         try {
             file.transferTo(savePath);
+
+            return saveFile;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

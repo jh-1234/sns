@@ -14,6 +14,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -45,6 +46,8 @@ public class PostDTO {
     private List<FileDTO> files;
 
     private Set<Long> deleteFileIds;
+
+    private UUID uuid;
 
     public void setContent(String content) {
         this.content = CommonUtils.strip(content);

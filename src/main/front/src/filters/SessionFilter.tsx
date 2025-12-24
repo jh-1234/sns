@@ -1,21 +1,11 @@
-import { sessionCheck } from "@/api/auth";
-import { useSetSession } from "@/store/Session";
-import { useEffect, type ReactNode } from "react";
-import { useLocation } from "react-router";
+import Loader from "@/components/common/Loader";
+import { useSession } from "@/hooks/useAuth";
+import { type ReactNode } from "react";
 
 const SessionFilter = ({ children }: { children: ReactNode }) => {
-  const location = useLocation();
-  const setSession = useSetSession();
+  const { isLoading, isPending } = useSession();
 
-  useEffect(() => {
-    const fn = async () => {
-      const data = await sessionCheck();
-
-      setSession(data);
-    };
-
-    fn();
-  }, [location]);
+  if (isLoading || isPending) return <Loader />;
 
   return <>{children}</>;
 };

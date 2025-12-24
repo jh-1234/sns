@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "TBL_USER")
@@ -22,6 +23,11 @@ public class User extends TimeEntity {
     public void init() {
         telClean = CommonUtils.telClean(tel);
         isDeleted = false;
+    }
+
+    @PreUpdate
+    public void update() {
+        telClean = CommonUtils.telClean(tel);
     }
 
     @Id
@@ -52,6 +58,13 @@ public class User extends TimeEntity {
 
     @NotBlank
     private String gender;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PROFILE_ID")
+    private File profile;
+
+    @NotNull
+    private UUID uuid;
 
     @NotNull
     @Convert(converter = BooleanConverter.class)

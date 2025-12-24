@@ -10,7 +10,7 @@ const GlobalLayout = () => {
         <div className="m-auto flex h-full w-full max-w-250 justify-between px-4">
           <LogoButton />
 
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3">
             <ThemeButton />
             <ProfileButton />
           </div>

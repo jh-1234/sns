@@ -13,7 +13,9 @@ function App() {
     try {
       const themeStore = localStorage.getItem("themeStore");
       const themeParse = themeStore ? JSON.parse(themeStore) : null;
-      const theme = themeParse.state.theme;
+      const theme = themeParse?.state?.theme;
+
+      if (!theme) return;
 
       const htmlTag = document.documentElement;
       htmlTag.classList.remove("dark", "light");

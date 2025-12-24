@@ -20,7 +20,8 @@ export const usePostSave = () => {
   return useMutation({
     mutationFn: postSave,
     onSuccess: () => {
-      queryClient.resetQueries({ queryKey: QUERY_KEYS.post.list });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.list });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.users });
     },
   });
 };
@@ -32,13 +33,13 @@ export const useGetPosts = (page: number, size: number) => {
   });
 };
 
-export const useGetPostsInfinity = () => {
+export const useGetPostsInfinity = (uuid?: string) => {
   const queryClient = useQueryClient();
 
   return useInfiniteQuery({
-    queryKey: QUERY_KEYS.post.list,
+    queryKey: uuid ? QUERY_KEYS.post.user(uuid) : QUERY_KEYS.post.list,
     queryFn: async ({ pageParam }) => {
-      const posts = await getPostsInfinity({ pageParam });
+      const posts = await getPostsInfinity({ uuid, pageParam });
 
       posts.content.forEach((post) => {
         queryClient.setQueryData(QUERY_KEYS.post.byId(post.postId!), post);
@@ -61,6 +62,7 @@ export const usePostDelete = () => {
     onSuccess: (_, postId) => {
       queryClient.removeQueries({ queryKey: QUERY_KEYS.post.byId(postId) });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.list });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.users });
     },
   });
 };
@@ -72,6 +74,7 @@ export const useTogglePostLike = () => {
     mutationFn: togglePostLike,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.list });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.users });
     },
     onError: (e) => {
       toast.error("오류가 발생했습니다.", { position: "top-center" });

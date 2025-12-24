@@ -27,7 +27,7 @@ export default function RootRoute() {
           <Route path="/" element={<Index />} />
 
           <Route path="/post/:postId" element={<PostDetail />} />
-          <Route path="/profile/:userId" element={<ProfileDetail />} />
+          <Route path="/profile/:uuid" element={<ProfileDetail />} />
           <Route path="/reset-password" element={<AccountInfoUpdate />} />
         </Route>
         <Route path="*" element={<NotFound />} />

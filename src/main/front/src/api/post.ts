@@ -20,8 +20,8 @@ export const postSave = async ({
   formData.append("data", postData);
 
   if (images && images.length > 0) {
-    images.forEach((file) => {
-      formData.append("images", file);
+    images.forEach((image) => {
+      formData.append("images", image);
     });
   }
 
@@ -53,10 +53,15 @@ export const getPosts = async (
 
 // 무한 스크롤
 export const getPostsInfinity = async ({
+  uuid,
   pageParam = 0,
+}: {
+  uuid?: string;
+  pageParam: number;
 }): Promise<Page<Post>> => {
   const { data } = await axios.get("/api/post", {
     params: {
+      uuid,
       page: pageParam,
       size: PAGE_SIZE,
     },

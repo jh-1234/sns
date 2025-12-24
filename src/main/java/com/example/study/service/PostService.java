@@ -57,9 +57,9 @@ public class PostService {
         }).orElseThrow();
     }
 
-    public PageObj<PostDTO> getPosts(Pageable pageable) {
+    public PageObj<PostDTO> getPosts(UUID uuid, Pageable pageable) {
         // post list 조회
-        Page<PostDTO> posts = postRepository.getPosts(pageable);
+        Page<PostDTO> posts = postRepository.getPosts(uuid, pageable);
 
         // post 마다 업로드 된 이미지 파일을 조회하기 위해 pk를 Set에 추출
         Set<Long> postIds = posts.stream().map(PostDTO::getPostId).collect(Collectors.toSet());

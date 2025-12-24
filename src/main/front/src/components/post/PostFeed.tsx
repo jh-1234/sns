@@ -5,7 +5,7 @@ import PostItem from "./PostItem";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 
-const PostFeed = () => {
+const PostFeed = ({ uuid }: { uuid?: string }) => {
   const {
     data,
     error,
@@ -14,12 +14,14 @@ const PostFeed = () => {
     hasNextPage,
     isFetchingNextPage,
     isFetching,
-  } = useGetPostsInfinity();
+  } = useGetPostsInfinity(uuid);
+
   const { ref, inView } = useInView({
     threshold: 1.0,
     rootMargin: "0px 0px 50px 0px",
     delay: 300,
   });
+
   const posts = data?.pages.flatMap((page) => page.content ?? []);
 
   useEffect(() => {
@@ -32,7 +34,7 @@ const PostFeed = () => {
   if (isPending) return <Loader />;
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-6">
       {Array.isArray(posts) &&
         posts.map((post) => <PostItem key={post.postId} {...post} />)}
       {isFetchingNextPage && <Loader />}

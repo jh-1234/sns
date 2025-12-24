@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,8 +40,8 @@ public class PostController {
     }
 
     @GetMapping("/api/post")
-    public ResponseEntity<PageObj<PostDTO>> getPosts(@PageableDefault Pageable pageable) {
-        PageObj<PostDTO> posts = postService.getPosts(pageable);
+    public ResponseEntity<PageObj<PostDTO>> getPosts(@RequestParam(value = "uuid", required = false) UUID uuid, @PageableDefault Pageable pageable) {
+        PageObj<PostDTO> posts = postService.getPosts(uuid, pageable);
 
         return ResponseEntity.ok(posts);
     }

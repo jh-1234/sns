@@ -14,6 +14,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Objects;
 
 @Component
 @Transactional
@@ -32,12 +33,18 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         User user = ((CustomUserDetails) authentication.getPrincipal()).getUser();
 
         UserDTO dto = new UserDTO();
+        dto.setSeq(user.getSeq());
         dto.setUserId(user.getUserId());
         dto.setName(user.getName());
         dto.setTel(user.getTel());
         dto.setEmail(user.getEmail());
         dto.setBirthday(user.getBirthday());
         dto.setGender(user.getGender());
+        dto.setUuid(user.getUuid());
+
+        if (Objects.nonNull(user.getProfile())) {
+            dto.setProfileUrl(user.getProfile().getFileLoadPath());
+        }
 
         writer.write(objectMapper.writeValueAsString(dto));
 

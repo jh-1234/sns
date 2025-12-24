@@ -3,8 +3,8 @@ import { Link } from "react-router";
 
 const LogoButton = () => {
   return (
-    <Link to={"/"} className="flex items-center gap-2">
-      <img className="h-10" src={logo} />
+    <Link to={"/"} className="flex items-center">
+      <img className="h-12 w-24" src={logo} />
     </Link>
   );
 };

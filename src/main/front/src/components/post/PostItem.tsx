@@ -1,5 +1,5 @@
 import type { Post } from "@/types/post";
-import defaultProfile from "@/assets/default-profile.png";
+import defaultProfile from "@/assets/default_profile.png";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { MessageCircle } from "lucide-react";
 import { formatTimeAgo } from "@/lib/time";
@@ -7,6 +7,7 @@ import EditPostButton from "./EditPostButton";
 import DeletePostButton from "./DeletePostButton";
 import { useSession } from "@/store/Session";
 import LikePostButton from "./LikePostButton";
+import { Link } from "react-router";
 
 const PostItem = (post: Post) => {
   const session = useSession();
@@ -17,11 +18,15 @@ const PostItem = (post: Post) => {
   return (
     <div className="flex flex-col gap-4 border-b pb-8">
       <div className="flex justify-between">
-        <div className="flex items-start gap-4">
-          <img
-            src={post.profileUrl || defaultProfile}
-            className="h-10 w-10 rounded-full object-cover"
-          />
+        <div className="flex gap-4">
+          <Link to={`/profile/${post.uuid}`}>
+            <div className="transition-hover flex cursor-pointer items-center justify-center rounded-full bg-gray-100 p-1 shadow-sm hover:bg-gray-50 dark:bg-slate-300">
+              <img
+                src={post.profileUrl || defaultProfile}
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            </div>
+          </Link>
           <div>
             <div className="font-bold hover:underline">{post.authorName}</div>
             <div className="text-muted-foreground text-sm">
