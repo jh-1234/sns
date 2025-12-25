@@ -1,6 +1,6 @@
 package com.example.study.security;
 
-import com.example.study.dto.UserDTO;
+import com.example.study.dto.auth.UserDTO;
 import com.example.study.entity.User;
 import com.example.study.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;

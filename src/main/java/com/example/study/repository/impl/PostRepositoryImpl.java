@@ -1,10 +1,12 @@
 package com.example.study.repository.impl;
 
-import com.example.study.dto.PostDTO;
+import com.example.study.dto.post.PostDTO;
 import com.example.study.repository.custom.PostRepositoryCustom;
 import com.example.study.util.Session;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.example.study.entity.QPost.post;
+import static com.example.study.entity.QPostComment.postComment;
 import static com.example.study.entity.QPostLikeUserMapping.postLikeUserMapping;
 import static com.example.study.entity.QUser.user;
 
@@ -26,6 +29,44 @@ import static com.example.study.entity.QUser.user;
 public class PostRepositoryImpl implements PostRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public PostDTO getPost(Long postId) {
+        return queryFactory
+                .select(Projections.bean(PostDTO.class,
+                        post.postId,
+                        user.seq.as("authorId"),
+                        user.name.as("authorName"),
+                        user.profile.fileLoadPath.as("profileUrl"),
+                        user.uuid,
+                        post.content,
+                        post.likeCount,
+                        postLikeUserMapping.likeId.isNotNull().as("isLiked"),
+                        post.isUpdated,
+                        post.createdDate,
+                        Expressions.as(
+                                JPAExpressions
+                                        .select(postComment.count().intValue())
+                                        .from(postComment)
+                                        .where(
+                                                postComment.post.eq(post),
+                                                postComment.isDeleted.eq(false)
+                                        ), "commentCount")
+                ))
+                .from(post)
+                .join(post.user, user)
+                .leftJoin(postLikeUserMapping)
+                .on(
+                        postLikeUserMapping.post.eq(post),
+                        postLikeUserMapping.user.eq(Session.getSession()),
+                        postLikeUserMapping.isDeleted.eq(false)
+                )
+                .where(
+                        post.postId.eq(postId),
+                        post.isDeleted.eq(false)
+                )
+                .fetchOne();
+    }
 
     @Override
     public Page<PostDTO> getPosts(UUID uuid, Pageable pageable) {

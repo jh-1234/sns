@@ -1,4 +1,9 @@
 import {
+  commentDelete,
+  commentSave,
+  commentUpdate,
+  getComments,
+  getPost,
   getPosts,
   getPostsInfinity,
   postDelete,
@@ -6,6 +11,7 @@ import {
   togglePostLike,
 } from "@/api/post";
 import { QUERY_KEYS } from "@/lib/constants";
+import type { Comment } from "@/types/post";
 import {
   useInfiniteQuery,
   useMutation,
@@ -26,6 +32,13 @@ export const usePostSave = () => {
   });
 };
 
+export const useGetPost = (postId: number) => {
+  return useQuery({
+    queryKey: QUERY_KEYS.post.postById(postId),
+    queryFn: () => getPost(postId),
+  });
+};
+
 export const useGetPosts = (page: number, size: number) => {
   return useQuery({
     queryKey: [...QUERY_KEYS.post.list, { page, size }],
@@ -42,7 +55,7 @@ export const useGetPostsInfinity = (uuid?: string) => {
       const posts = await getPostsInfinity({ uuid, pageParam });
 
       posts.content.forEach((post) => {
-        queryClient.setQueryData(QUERY_KEYS.post.byId(post.postId!), post);
+        queryClient.setQueryData(QUERY_KEYS.post.postById(post.postId!), post);
       });
 
       return posts;
@@ -60,7 +73,7 @@ export const usePostDelete = () => {
   return useMutation({
     mutationFn: postDelete,
     onSuccess: (_, postId) => {
-      queryClient.removeQueries({ queryKey: QUERY_KEYS.post.byId(postId) });
+      queryClient.removeQueries({ queryKey: QUERY_KEYS.post.postById(postId) });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.list });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.users });
     },
@@ -73,13 +86,75 @@ export const useTogglePostLike = () => {
   return useMutation({
     mutationFn: togglePostLike,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.list });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.users });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.post.all });
     },
     onError: (e) => {
       toast.error("오류가 발생했습니다.", { position: "top-center" });
 
       console.error(e);
+    },
+  });
+};
+
+export const useGetComments = (postId: number) => {
+  return useQuery({
+    queryKey: QUERY_KEYS.post.comment.comments(postId),
+    queryFn: () => getComments(postId),
+  });
+};
+
+export const useCommentSave = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: commentSave,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.post.postById(variables.postId!),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.post.comment.comments(variables.postId!),
+      });
+
+      toast.success("등록 되었습니다", {
+        position: "top-center",
+      });
+    },
+  });
+};
+
+export const useCommentUpdate = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: commentUpdate,
+    onSuccess: (_, variables) => {
+      console.log("dd", variables.postId);
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.post.comment.comments(variables.postId!),
+      });
+
+      toast.success("수정 되었습니다", {
+        position: "top-center",
+      });
+    },
+  });
+};
+
+export const useCommentDelete = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (comment: Comment) => commentDelete(comment.commentId!),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.post.postById(variables.postId!),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.post.comment.comments(variables.postId!),
+      });
     },
   });
 };

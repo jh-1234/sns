@@ -3,11 +3,13 @@ import { Button } from "../ui/button";
 import { useOpenAlertModal } from "@/store/AlertModal";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const DeletePostButton = ({ postId }: { postId: number }) => {
   const { mutate: postDelete, isPending } = usePostDelete();
 
   const openAlertModal = useOpenAlertModal();
+  const navigate = useNavigate();
 
   const handleButtonClick = () => {
     openAlertModal({
@@ -25,6 +27,12 @@ const DeletePostButton = ({ postId }: { postId: number }) => {
                 border: "none",
               },
             });
+
+            const pathname = window.location.pathname;
+
+            if (pathname.startsWith(`/post/${postId}`)) {
+              navigate("/", { replace: true });
+            }
           },
           onError: (e) => {
             toast.error("삭제 중 오류가 발생했습니다.", {

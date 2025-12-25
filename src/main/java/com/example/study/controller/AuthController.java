@@ -1,8 +1,8 @@
 package com.example.study.controller;
 
-import com.example.study.dto.JoinDTO;
-import com.example.study.dto.UserDTO;
-import com.example.study.dto.UserInfoDTO;
+import com.example.study.dto.auth.JoinDTO;
+import com.example.study.dto.auth.UserDTO;
+import com.example.study.dto.auth.UserInfoDTO;
 import com.example.study.security.CustomUserDetails;
 import com.example.study.service.AuthService;
 import jakarta.validation.Valid;

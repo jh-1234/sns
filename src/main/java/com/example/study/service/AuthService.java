@@ -1,8 +1,8 @@
 package com.example.study.service;
 
-import com.example.study.dto.JoinDTO;
-import com.example.study.dto.UserDTO;
-import com.example.study.dto.UserInfoDTO;
+import com.example.study.dto.auth.JoinDTO;
+import com.example.study.dto.auth.UserDTO;
+import com.example.study.dto.auth.UserInfoDTO;
 import com.example.study.entity.File;
 import com.example.study.entity.User;
 import com.example.study.enums.FileModuleType;
@@ -125,7 +125,7 @@ public class AuthService {
         user.setGender(dto.getGender());
 
         if (StringUtils.hasText(dto.getPassword())) {
-            user.setPassword(dto.getPassword());
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
         if (Objects.nonNull(image)) {

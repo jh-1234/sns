@@ -1,10 +1,11 @@
-package com.example.study.dto;
+package com.example.study.dto.post;
 
+import com.example.study.dto.common.FileDTO;
 import com.example.study.util.CommonUtils;
 import com.example.study.valid.CustomValidation;
-import com.example.study.valid.groups.common.SaveGroup;
-import com.example.study.valid.groups.common.UpdateGroup;
-import com.example.study.valid.groups.post.PostLikeCountGroup;
+import com.example.study.valid.groups.common.Save;
+import com.example.study.valid.groups.common.Update;
+import com.example.study.valid.groups.post.PostLikeCount;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostDTO {
 
-    @NotNull(groups = {UpdateGroup.class, PostLikeCountGroup.class})
+    @NotNull(groups = {Update.class, PostLikeCount.class})
     private Long postId;
 
     private Long authorId;
@@ -29,14 +30,14 @@ public class PostDTO {
     private String authorName;
 
     @Setter(AccessLevel.NONE)
-    @CustomValidation(name = "내용", max = 3000, nullable = false, groups = {SaveGroup.class, UpdateGroup.class})
+    @CustomValidation(name = "내용", max = 3000, nullable = false, groups = {Save.class, Update.class})
     private String content;
 
     private String profileUrl;
 
     private Integer likeCount;
 
-    @NotNull(groups = {PostLikeCountGroup.class})
+    @NotNull(groups = {PostLikeCount.class})
     private Boolean isLiked;
 
     private Boolean isUpdated;
@@ -48,6 +49,8 @@ public class PostDTO {
     private Set<Long> deleteFileIds;
 
     private UUID uuid;
+
+    private Integer commentCount;
 
     public void setContent(String content) {
         this.content = CommonUtils.strip(content);

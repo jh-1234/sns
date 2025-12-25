@@ -1,8 +1,9 @@
-package com.example.study.dto;
+package com.example.study.dto.auth;
 
 import com.example.study.enums.ValidationType;
 import com.example.study.util.CommonUtils;
 import com.example.study.valid.CustomValidation;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -13,17 +14,14 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class JoinDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserInfoDTO {
 
     @Setter(AccessLevel.NONE)
     @CustomValidation(name = "이름", min = 1, max = 15, nullable = false)
     private String name;
 
-    @Setter(AccessLevel.NONE)
-    @CustomValidation(name = "아이디", min = 6, max = 20, nullable = false, checkType = ValidationType.ALPHA_NUMERIC)
-    private String userId;
-
-    @CustomValidation(name = "비밀번호", min = 8, max = 100, nullable = false, checkType = ValidationType.PASSWORD)
+    @CustomValidation(name = "비밀번호", min = 8, max = 100, checkType = ValidationType.PASSWORD)
     private String password;
 
     @Setter(AccessLevel.NONE)
@@ -40,12 +38,10 @@ public class JoinDTO {
     @NotBlank
     private String gender;
 
+    private String profileUrl;
+
     public void setName(String name) {
         this.name = CommonUtils.strip(name);
-    }
-
-    public void setUserId(String userId) {
-        this.userId = CommonUtils.strip(userId);
     }
 
     public void setTel(String tel) {

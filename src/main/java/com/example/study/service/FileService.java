@@ -1,6 +1,6 @@
 package com.example.study.service;
 
-import com.example.study.dto.FileDTO;
+import com.example.study.dto.common.FileDTO;
 import com.example.study.entity.File;
 import com.example.study.enums.FileModuleType;
 import com.example.study.enums.FileType;

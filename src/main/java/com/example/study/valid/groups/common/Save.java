@@ -1,4 +1,4 @@
 package com.example.study.valid.groups.common;
 
-public interface SaveGroup {
+public interface Save {
 }

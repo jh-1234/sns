@@ -1,6 +1,6 @@
 package com.example.study.repository.impl;
 
-import com.example.study.dto.UserDTO;
+import com.example.study.dto.auth.UserDTO;
 import com.example.study.repository.custom.UserRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;

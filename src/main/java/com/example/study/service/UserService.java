@@ -1,6 +1,6 @@
 package com.example.study.service;
 
-import com.example.study.dto.UserDTO;
+import com.example.study.dto.auth.UserDTO;
 import com.example.study.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

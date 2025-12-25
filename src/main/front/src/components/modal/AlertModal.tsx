@@ -35,10 +35,16 @@ const AlertModal = () => {
           <AlertDialogDescription>{store.description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancelClick}>
+          <AlertDialogCancel
+            onClick={handleCancelClick}
+            className="cursor-pointer"
+          >
             취소
           </AlertDialogCancel>
-          <AlertDialogAction onClick={handleActionClick}>
+          <AlertDialogAction
+            onClick={handleActionClick}
+            className="cursor-pointer"
+          >
             확인
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -1,5 +1,5 @@
 import type { Page } from "@/types/page";
-import type { Post } from "@/types/post";
+import type { Comment, Post } from "@/types/post";
 import axios from "axios";
 
 const PAGE_SIZE = 10;
@@ -28,12 +28,19 @@ export const postSave = async ({
   let res;
 
   if (data.postId) {
-    res = await axios.patch("/api/post", formData);
+    res = await axios.patch("/api/posts", formData);
   } else {
-    res = await axios.post("/api/post", formData);
+    res = await axios.post("/api/posts", formData);
   }
 
   return res;
+};
+
+// detail
+export const getPost = async (postId: number): Promise<Post> => {
+  const { data } = await axios.get(`/api/posts/${postId}`);
+
+  return data;
 };
 
 // 일반 페이징
@@ -41,7 +48,7 @@ export const getPosts = async (
   page = 0,
   size = PAGE_SIZE,
 ): Promise<Page<Post>> => {
-  const { data } = await axios.get("/api/post", {
+  const { data } = await axios.get("/api/posts", {
     params: {
       page: page,
       size: size,
@@ -59,7 +66,7 @@ export const getPostsInfinity = async ({
   uuid?: string;
   pageParam: number;
 }): Promise<Page<Post>> => {
-  const { data } = await axios.get("/api/post", {
+  const { data } = await axios.get("/api/posts", {
     params: {
       uuid,
       page: pageParam,
@@ -71,7 +78,7 @@ export const getPostsInfinity = async ({
 };
 
 export const postDelete = async (postId: number) => {
-  const res = await axios.delete(`/api/post/${postId}`);
+  const res = await axios.delete(`/api/posts/${postId}`);
 
   return res;
 };
@@ -87,6 +94,30 @@ export const togglePostLike = async ({
     postId,
     isLiked,
   });
+
+  return res;
+};
+
+export const getComments = async (postId: number): Promise<Comment[]> => {
+  const { data } = await axios.get(`/api/posts/${postId}/comments`);
+
+  return data;
+};
+
+export const commentSave = async (comment: Comment) => {
+  const res = await axios.post("/api/posts/comments", comment);
+
+  return res;
+};
+
+export const commentUpdate = async (comment: Comment) => {
+  const res = await axios.patch("/api/posts/comments", comment);
+
+  return res;
+};
+
+export const commentDelete = async (commentId: number) => {
+  const res = await axios.delete(`/api/posts/comments/${commentId}`);
 
   return res;
 };

@@ -36,7 +36,7 @@ const PostFeed = ({ uuid }: { uuid?: string }) => {
   return (
     <div className="flex flex-col gap-6">
       {Array.isArray(posts) &&
-        posts.map((post) => <PostItem key={post.postId} {...post} />)}
+        posts.map((post) => <PostItem key={post.postId} post={post} />)}
       {isFetchingNextPage && <Loader />}
       {!isFetching && hasNextPage && <div ref={ref} className="h-1"></div>}
     </div>

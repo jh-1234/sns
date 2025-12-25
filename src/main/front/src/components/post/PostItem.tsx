@@ -9,7 +9,13 @@ import { useSession } from "@/store/Session";
 import LikePostButton from "./LikePostButton";
 import { Link } from "react-router";
 
-const PostItem = (post: Post) => {
+const PostItem = ({
+  isDetail = false,
+  post,
+}: {
+  isDetail?: boolean;
+  post: Post;
+}) => {
   const session = useSession();
   const seq = session?.seq;
 
@@ -45,10 +51,18 @@ const PostItem = (post: Post) => {
         </div>
       </div>
 
-      <div className="flex cursor-pointer flex-col gap-5">
-        <div className="line-clamp-2 wrap-break-word whitespace-pre-wrap">
-          {post.content}
-        </div>
+      <div className="flex flex-col gap-5">
+        {isDetail ? (
+          <div className="wrap-break-word whitespace-pre-wrap">
+            {post.content}
+          </div>
+        ) : (
+          <Link to={`/post/${post.postId}`}>
+            <div className="line-clamp-2 wrap-break-word whitespace-pre-wrap">
+              {post.content}
+            </div>
+          </Link>
+        )}
 
         <Carousel>
           <CarouselContent>
@@ -74,10 +88,14 @@ const PostItem = (post: Post) => {
         />
       </div>
 
-      <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border p-2 px-4 text-sm">
-        <MessageCircle className="h-4 w-4" />
-        <span>댓글달기</span>
-      </div>
+      {!isDetail && (
+        <Link to={`/post/${post.postId}`}>
+          <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border p-2 px-4 text-sm">
+            <MessageCircle className="h-4 w-4" />
+            <span>댓글달기</span>
+          </div>
+        </Link>
+      )}
     </div>
   );
 };

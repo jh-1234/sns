@@ -58,7 +58,7 @@ const PostEditorModal = () => {
     }
 
     if (isEditMode && post) {
-      setContent(post.content);
+      setContent(post.content!);
 
       const existingImages: Image[] = (post.files || []).map((file) => ({
         file: null,
@@ -69,7 +69,7 @@ const PostEditorModal = () => {
       setImages(existingImages);
       setDeleteFileIds([]);
       setOriginData({
-        content: post.content,
+        content: post.content!,
         imageCount: post.files?.length || 0,
       });
     } else {

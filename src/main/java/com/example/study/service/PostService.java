@@ -1,11 +1,14 @@
 package com.example.study.service;
 
-import com.example.study.dto.FileDTO;
-import com.example.study.dto.PostDTO;
+import com.example.study.dto.common.FileDTO;
+import com.example.study.dto.post.CommentDTO;
+import com.example.study.dto.post.PostDTO;
 import com.example.study.entity.File;
 import com.example.study.entity.Post;
+import com.example.study.entity.PostComment;
 import com.example.study.entity.PostLikeUserMapping;
 import com.example.study.enums.FileModuleType;
+import com.example.study.repository.PostCommentRepository;
 import com.example.study.repository.PostLikeUserMappingRepository;
 import com.example.study.repository.PostRepository;
 import com.example.study.util.CustomException;
@@ -28,11 +31,13 @@ public class PostService {
 
     private final PostRepository postRepository;
 
+    private final PostCommentRepository postCommentRepository;
+
     private final PostLikeUserMappingRepository postLikeUserMappingRepository;
 
     private final FileService fileService;
 
-    public void save(PostDTO dto, List<MultipartFile> images) {
+    public void postSave(PostDTO dto, List<MultipartFile> images) {
         Post post = new Post();
         post.setUser(Session.getSession());
         post.setContent(dto.getContent());
@@ -42,19 +47,7 @@ public class PostService {
     }
 
     public PostDTO getPost(Long postId) {
-        return findByPostId(postId).map(post -> {
-            PostDTO dto = new PostDTO();
-            dto.setPostId(post.getPostId());
-            dto.setAuthorId(post.getUser().getSeq());
-            dto.setAuthorName(post.getUser().getName());
-            dto.setContent(post.getContent());
-            dto.setLikeCount(post.getLikeCount());
-            dto.setIsUpdated(post.getIsUpdated());
-            dto.setFiles(fileService.getFiles(FileModuleType.POST, post.getPostId()));
-            dto.setCreatedDate(post.getCreatedDate());
-
-            return dto;
-        }).orElseThrow();
+        return postRepository.getPost(postId);
     }
 
     public PageObj<PostDTO> getPosts(UUID uuid, Pageable pageable) {
@@ -73,7 +66,7 @@ public class PostService {
         return new PageObj<>(posts);
     }
 
-    public void update(PostDTO dto, List<MultipartFile> images) {
+    public void postUpdate(PostDTO dto, List<MultipartFile> images) {
         Post post = findByPostId(dto.getPostId()).orElseThrow();
 
         if (!Objects.equals(Session.getSession().getSeq(), post.getUser().getSeq())) {
@@ -86,7 +79,7 @@ public class PostService {
         fileService.save(images, FileModuleType.POST, post.getPostId());
     }
 
-    public void delete(Long postId) {
+    public void postDelete(Long postId) {
         Post post = findByPostId(postId).orElseThrow();
 
         if (!Objects.equals(Session.getSession().getSeq(), post.getUser().getSeq())) {
@@ -102,7 +95,7 @@ public class PostService {
         return postRepository.findByPostIdAndIsDeletedIsFalse(postId);
     }
 
-    public void likeCountUpdate(PostDTO dto) {
+    public void postLikeCountUpdate(PostDTO dto) {
         Post post = findByPostId(dto.getPostId()).orElseThrow();
 
         PostLikeUserMapping mapping = new PostLikeUserMapping();
@@ -116,5 +109,43 @@ public class PostService {
             postLikeUserMappingRepository.save(mapping);
             postRepository.incrementLikeCount(post.getPostId());
         }
+    }
+
+    public void commentSave(CommentDTO dto) {
+        PostComment comment = new PostComment();
+        comment.setPost(findByPostId(dto.getPostId()).orElseThrow());
+        comment.setUser(Session.getSession());
+        comment.setContent(dto.getContent());
+
+        postCommentRepository.save(comment);
+    }
+
+    public void commentUpdate(CommentDTO dto) {
+        PostComment comment = findByCommentId(dto.getCommentId()).orElseThrow();
+        comment.setContent(dto.getContent());
+    }
+
+    public void commentDelete(Long commentId) {
+        PostComment comment = findByCommentId(commentId).orElseThrow();
+        comment.setIsDeleted(true);
+    }
+
+    public List<CommentDTO> getComments(Long postId) {
+        return postCommentRepository.findAllByPost_PostIdAndIsDeletedFalseOrderByCreatedDateDesc(postId).stream().map(comment -> {
+            CommentDTO dto = new CommentDTO();
+            dto.setCommentId(comment.getCommentId());
+            dto.setPostId(comment.getPost().getPostId());
+            dto.setUserSeq(comment.getUser().getSeq());
+            dto.setUsername(comment.getUser().getName());
+            dto.setUuid(comment.getUser().getUuid());
+            dto.setContent(comment.getContent());
+            dto.setUserProfileUrl(comment.getUser().getProfile().getFileLoadPath());
+
+            return dto;
+        }).toList();
+    }
+
+    public Optional<PostComment> findByCommentId(Long commentId) {
+        return postCommentRepository.findByCommentIdAndIsDeletedFalse(commentId);
     }
 }
